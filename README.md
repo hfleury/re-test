@@ -16,7 +16,7 @@ In this approach, the application is organized into distinct layers: `handlers` 
 
 ### ✅ Prerequisites
 
-- [Go installed](https://go.dev/doc/install) (version 1.20 or later recommended)
+- [Go installed](https://go.dev/doc/install) (version 1.23 or later recommended)
 
 ### 🚀 Run the Server
 
@@ -37,7 +37,7 @@ curl -X GET "http://localhost:8081/calculate?order_amount=12001" -H "Accept: app
 
 ### ✅ Prerequisites
 
-- [Node.js and npm installed](https://nodejs.org/) (for running the frontend)
+- [Node.js and npm installed](https://nodejs.org/)
 
 ### 🚀 Run the Client
 
@@ -49,3 +49,16 @@ npm start
 
 ### Testing
 The frontend will be available on (http://localhost:3000)[http://localhost:3000] and will communicate with the backend API running on port 8081.
+
+
+## Testing using Docker
+
+### ✅ Prerequisites
+
+- [Docker and Docker Compse installed](https://docs.docker.com/compose/install/)
+
+### 🚀 Start the containers
+
+```bash
+docker compose up
+```
