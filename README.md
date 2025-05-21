@@ -1,2 +1,32 @@
 # re-test
-Henry code test for RE Partners
+Henry code test for RE Partners.
+
+## Folder Structure
+
+This project folder structure follows a **Layered Structure**.
+
+### Layered Structure
+In this approach, the application is organized into distinct layers: `handlers` (or controllers), `services`, `repositories`, and `models`. Each layer is responsible for a specific concern, promoting separation of concerns and maintainability.
+
+📚 Inspired by this [Medium article on Go project folder structures](https://medium.com/@smart_byte_labs/organize-like-a-pro-a-simple-guide-to-go-project-folder-structures-e85e9c1769c2).
+
+---
+
+### ✅ Prerequisites
+
+- [Go installed](https://go.dev/doc/install) (version 1.20 or later recommended)
+
+### 🚀 Run the Server
+
+```bash
+go mod tidy
+go run cmd/main.go
+```
+
+### Testing
+The server will start on http://localhost:8081
+Now you need to send a request
+
+```bash
+curl -X GET "http://localhost:8081/calculate?order_amount=12001" -H "Accept: application/json"
+```
