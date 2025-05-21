@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8081';
+
 function App() {
   const [orderAmount, setOrderAmount] = useState('');
   const [result, setResult] = useState(null);
@@ -15,7 +17,7 @@ function App() {
     }
 
     try {
-      const response = await fetch(`http://localhost:8081/calculate?order_amount=${orderAmount}`);
+      const response = await fetch(`${API_BASE_URL}/calculate?order_amount=${orderAmount}`);
       const data = await response.json();
 
       if (!response.ok) {

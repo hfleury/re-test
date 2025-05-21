@@ -62,3 +62,10 @@ The frontend will be available on (http://localhost:3000)[http://localhost:3000]
 ```bash
 docker compose up
 ```
+
+### Pack sizes
+The pack sizes are in config/configuration.yaml
+
+```json
+pack_sizes: [250, 500, 1000, 2000, 5000]
+```
