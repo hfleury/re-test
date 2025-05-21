@@ -12,6 +12,8 @@ In this approach, the application is organized into distinct layers: `handlers` 
 
 ---
 
+## Testing the backend
+
 ### ✅ Prerequisites
 
 - [Go installed](https://go.dev/doc/install) (version 1.20 or later recommended)
@@ -30,3 +32,20 @@ Now you need to send a request
 ```bash
 curl -X GET "http://localhost:8081/calculate?order_amount=12001" -H "Accept: application/json"
 ```
+
+## Testing using the UI
+
+### ✅ Prerequisites
+
+- [Node.js and npm installed](https://nodejs.org/) (for running the frontend)
+
+### 🚀 Run the Client
+
+```bash
+cd web
+npm install
+npm start
+```
+
+### Testing
+The frontend will be available on (http://localhost:3000)[http://localhost:3000] and will communicate with the backend API running on port 8081.
