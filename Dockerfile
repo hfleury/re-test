@@ -6,15 +6,16 @@ COPY go.mod go.sum ./
 RUN go mod download
 
 COPY . .
-COPY config/configuration.yaml config/configuration.yaml
 
 RUN go build -o server cmd/main.go
 
+# ---------- FINAL IMAGE ----------
 FROM alpine:latest
 
 WORKDIR /app
 
 COPY --from=builder /app/server .
+COPY --from=builder /app/config/configuration.yaml config/configuration.yaml
 
 EXPOSE 8081
 
