@@ -12,15 +12,18 @@ import (
 )
 
 func main() {
-	AppConfig, err := config.NewConfig("config/configuration.yaml")
+	configFilePath := "config/configuration.yaml"
+	AppConfig, err := config.NewConfig(configFilePath)
 	if err != nil {
 		log.Fatalf("Failed to load configuration: %v", err)
 	}
 
 	// Initlialize services
-	packSizesService := services.NewPackSizeService(AppConfig.PackSize)
+	packSizesService := services.NewPackSizeService()
+	configSerice := services.NewConfigService(AppConfig, configFilePath)
 	// Initialize handlers
-	packSizeHandler := handlers.NewPackSizeHandler(packSizesService)
+	packSizeHandler := handlers.NewPackSizeHandler(packSizesService, configSerice)
+	configHandler := handlers.NewConfigHandler(configSerice)
 
 	router := gin.Default()
 
@@ -36,6 +39,7 @@ func main() {
 
 	// Initialize routes
 	packSizeHandler.RegisterRoutes(router)
+	configHandler.RegisterRoutes(router)
 
 	log.Println("Starting server on port 8081")
 	if err := router.Run(":8081"); err != nil {

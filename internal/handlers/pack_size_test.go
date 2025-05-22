@@ -7,31 +7,23 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
-	"github.com/hfleury/re-test/internal/domain"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 )
 
-type mockPackSizeService struct {
-	mock.Mock
-}
-
-func (m *mockPackSizeService) CalculatePackSizeByOrderAmount(orderItems int) (map[int]int, error) {
-	args := m.Called(orderItems)
-	return args.Get(0).(map[int]int), args.Error(1)
-}
-
-func setupRouterWithHandler(service domain.PackSizeService) *gin.Engine {
+// Adjust this to accept both mocks, always pass both
+func setupRouterWithHandler(packService *MockPackSizeService, configService *MockConfigService) *gin.Engine {
 	gin.SetMode(gin.TestMode)
 	router := gin.Default()
-	handler := NewPackSizeHandler(service)
+	handler := NewPackSizeHandler(packService, configService)
 	handler.RegisterRoutes(router)
 	return router
 }
 
 func TestCalculatePackSizes_MissingQueryParam(t *testing.T) {
-	service := new(mockPackSizeService)
-	router := setupRouterWithHandler(service)
+	mockPackService := new(MockPackSizeService)
+	mockConfigService := new(MockConfigService)
+
+	router := setupRouterWithHandler(mockPackService, mockConfigService)
 
 	req, _ := http.NewRequest("GET", "/calculate", nil)
 	w := httptest.NewRecorder()
@@ -42,8 +34,10 @@ func TestCalculatePackSizes_MissingQueryParam(t *testing.T) {
 }
 
 func TestCalculatePackSizes_InvalidQueryParam(t *testing.T) {
-	service := new(mockPackSizeService)
-	router := setupRouterWithHandler(service)
+	mockPackService := new(MockPackSizeService)
+	mockConfigService := new(MockConfigService)
+
+	router := setupRouterWithHandler(mockPackService, mockConfigService)
 
 	req, _ := http.NewRequest("GET", "/calculate?order_amount=abc", nil)
 	w := httptest.NewRecorder()
@@ -54,10 +48,13 @@ func TestCalculatePackSizes_InvalidQueryParam(t *testing.T) {
 }
 
 func TestCalculatePackSizes_ServiceError(t *testing.T) {
-	service := new(mockPackSizeService)
-	service.On("CalculatePackSizeByOrderAmount", 100).Return(map[int]int{}, errors.New("some internal error"))
+	mockConfigService := new(MockConfigService)
+	mockPackSizeService := new(MockPackSizeService)
 
-	router := setupRouterWithHandler(service)
+	mockConfigService.On("GetPackSizes").Return([]int{250, 500})
+	mockPackSizeService.On("CalculatePackSizeByOrderAmount", 100, []int{250, 500}).Return(map[int]int{}, errors.New("some internal error"))
+
+	router := setupRouterWithHandler(mockPackSizeService, mockConfigService)
 
 	req, _ := http.NewRequest("GET", "/calculate?order_amount=100", nil)
 	w := httptest.NewRecorder()
@@ -65,17 +62,25 @@ func TestCalculatePackSizes_ServiceError(t *testing.T) {
 
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
 	assert.Contains(t, w.Body.String(), "internal server error")
+
+	mockConfigService.AssertExpectations(t)
+	mockPackSizeService.AssertExpectations(t)
 }
 
 func TestCalculatePackSizes_Success(t *testing.T) {
-	service := new(mockPackSizeService)
+	mockConfigService := new(MockConfigService)
+	mockPackSizeService := new(MockPackSizeService)
+
+	mockConfigService.On("GetPackSizes").Return([]int{250, 500})
+
 	expected := map[int]int{
 		250: 2,
 		500: 1,
 	}
-	service.On("CalculatePackSizeByOrderAmount", 1000).Return(expected, nil)
 
-	router := setupRouterWithHandler(service)
+	mockPackSizeService.On("CalculatePackSizeByOrderAmount", 1000, []int{250, 500}).Return(expected, nil)
+
+	router := setupRouterWithHandler(mockPackSizeService, mockConfigService)
 
 	req, _ := http.NewRequest("GET", "/calculate?order_amount=1000", nil)
 	w := httptest.NewRecorder()
@@ -84,4 +89,7 @@ func TestCalculatePackSizes_Success(t *testing.T) {
 	assert.Equal(t, http.StatusOK, w.Code)
 	assert.Contains(t, w.Body.String(), `"message":"success"`)
 	assert.Contains(t, w.Body.String(), `"packs":{"250":2,"500":1}`)
+
+	mockConfigService.AssertExpectations(t)
+	mockPackSizeService.AssertExpectations(t)
 }

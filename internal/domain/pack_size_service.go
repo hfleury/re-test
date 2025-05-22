@@ -1,5 +1,5 @@
 package domain
 
 type PackSizeService interface {
-	CalculatePackSizeByOrderAmount(orderItems int) (map[int]int, error)
+	CalculatePackSizeByOrderAmount(orderItems int, packSizes []int) (map[int]int, error)
 }

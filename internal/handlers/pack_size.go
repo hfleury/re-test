@@ -10,18 +10,19 @@ import (
 )
 
 type PackSizeHandler struct {
-	service domain.PackSizeService
+	packService   domain.PackSizeService
+	configService domain.ConfigService
 }
 
-func NewPackSizeHandler(service domain.PackSizeService) *PackSizeHandler {
+func NewPackSizeHandler(packService domain.PackSizeService, configService domain.ConfigService) *PackSizeHandler {
 	return &PackSizeHandler{
-		service: service,
+		packService:   packService,
+		configService: configService,
 	}
 }
 
 func (h *PackSizeHandler) RegisterRoutes(router *gin.Engine) {
 	router.GET("/calculate", h.CalculatePackSizes)
-
 }
 
 func (h *PackSizeHandler) CalculatePackSizes(c *gin.Context) {
@@ -43,7 +44,9 @@ func (h *PackSizeHandler) CalculatePackSizes(c *gin.Context) {
 		return
 	}
 
-	result, err := h.service.CalculatePackSizeByOrderAmount(amount)
+	packSizes := h.configService.GetPackSizes()
+
+	result, err := h.packService.CalculatePackSizeByOrderAmount(amount, packSizes)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, models.Response{
 			Code:    http.StatusInternalServerError,

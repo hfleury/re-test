@@ -1,5 +1,4 @@
-# This is the configuration file for the application.
-# It contains the settings for the application
-
-# These are available pack sizes
-pack_sizes: [250, 500, 1000, 2000, 5000]
+pack_sizes:
+    - 31
+    - 23
+    - 100
