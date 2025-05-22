@@ -20,7 +20,6 @@ import (
 func TestCalculatePackSizes_E2E(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
-	// real service with actual pack sizes
 	service := services.NewPackSizeService([]int{23, 31, 53})
 	handler := NewPackSizeHandler(service)
 

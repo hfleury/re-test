@@ -23,7 +23,6 @@ func (s *ConfigService) UpdatePackSizes(sizes []int) error {
 
 	s.config.PackSize = sizes
 
-	// Persist to the configuration.yaml file
 	err := s.config.SaveToFile(s.filePath)
 	if err != nil {
 		return fmt.Errorf("failed to save config: %w", err)

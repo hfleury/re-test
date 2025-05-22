@@ -10,7 +10,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// Adjust this to accept both mocks, always pass both
 func setupRouterWithHandler(packService *MockPackSizeService, configService *MockConfigService) *gin.Engine {
 	gin.SetMode(gin.TestMode)
 	router := gin.Default()
