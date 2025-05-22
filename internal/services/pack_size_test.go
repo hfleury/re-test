@@ -23,9 +23,9 @@ func TestPackSizeService_CalculatePackSizeByOrderAmount(t *testing.T) {
 				packSizes:  []int{23, 31, 53},
 			},
 			want: map[int]int{
-				53: 9433,
-				31: 1,
-				23: 1,
+				53: 9429,
+				31: 7,
+				23: 2,
 			},
 			wantErr: false,
 		},
